@@ -18,22 +18,20 @@ public class BankAccount implements TheBank{
 	// creates a lock to ensure mutually exclusive access to the bank account
 	private Lock accountKey = new ReentrantLock();
 	
-	File transactionList = new File("src/project2/transactions.csv");
-	FileWriter listWriter = null;
-	
-	DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss z");
-	
 	// variables for the bank account
 	private static final int DEPOSIT_AMOUNT_ALERT = 450; // depots equal to or over this amount will be flagged
 	private static final int WITHDRAWAL_AMOUNT_ALERT = 90; // withdrawals equal to or over this amount will be flagged
 	private static final int TRANSFER_AMOUNT_ALERT = 500; // transfers equal to or over this amount will be flagged
 	private static int transactionNum = 0; // tracks the number of transactions
 	private int balance = 0; // tracks the account balance
-	
+
+	// flagged_transaction number
+	// arguments: the $ amount moved during the transaction, name of the thread making the transaction, the transaction type, transaction number
 	public void flagged_transaction(int amount, String name, String trans_type, int trans_num) {
 		
+		// if  statements differentiate between deposits, withdrawals, and transfers, and write a similar message based on each type
 		
-		if(trans_type.equals("Deposit")) {
+		if(trans_type.equals("Deposit")) { 
 			System.out.println("*** FLAGGED TRANSACTION *** Agent " + name + " made a " + trans_type + " in excess of $" + DEPOSIT_AMOUNT_ALERT);
 			System.out.println(); //  empty line for formatting reasons
 			
@@ -55,6 +53,7 @@ public class BankAccount implements TheBank{
 	} //  end of the flagged_transaction method
 	
 	// start of the deposit function
+	// arguments: value being deposited, account number, name of the thread making the deposit
 	public void deposit(int value, String accountNum, String name) {
 		
 		if(this.accountKey.tryLock()) { // checks to see if the lock is available
@@ -72,14 +71,14 @@ public class BankAccount implements TheBank{
 					
 					if(value > DEPOSIT_AMOUNT_ALERT) {
 						System.out.println(); // empty line to make the console easier to read
-						flagged_transaction(value, name, "Deposit", transactionNum);
+						flagged_transaction(value, name, "Deposit", transactionNum); // calls the flagged_transaction function from above
 					}
 				
 				} // end of the try block
 				
 				catch(Exception e) { // catch block
 					
-					System.out.println("Exception thrown making a deposit into an account");
+					System.out.println("Exception thrown making a deposit into an account"); // debug line, prints if error is thrown
 					
 				} // end of the catch block
 				
@@ -104,6 +103,7 @@ public class BankAccount implements TheBank{
 	
 	
 	// start of withdraw method
+	// arguments: amount being withdrawan, account number, name of the thread making the withdrawal
 	public void withdraw(int amount, String accountNum, String name) {
 		
 		if(this.accountKey.tryLock()) { //  checks to see if the lock on this account is available
@@ -129,7 +129,7 @@ public class BankAccount implements TheBank{
 					if(amount > WITHDRAWAL_AMOUNT_ALERT) { // checks if withdrawal will set off an alert
 						
 						System.out.println(); // empty line to make the console easier to read
-						flagged_transaction(amount, name, "Withdrawal", transactionNum);
+						flagged_transaction(amount, name, "Withdrawal", transactionNum); // calls the flagged_transaction function from above
 						
 					} //  end of if statement
 					
@@ -168,6 +168,7 @@ public class BankAccount implements TheBank{
 	
 	
 	// transfer method
+	// arguments: jointAccount1 from the BankingSimulator class, jointAccount2 from the BankingSimmulator class, amount to transfer, thread making the transfer
 	public void transfer(BankAccount jointAccount1, BankAccount jointAccount2, int amount, String name) {
 		
 		if(jointAccount1.accountKey.tryLock() && jointAccount2.accountKey.tryLock()) { //  see's if the locks on both accounts are available
@@ -240,7 +241,7 @@ public class BankAccount implements TheBank{
 			
 			catch(Exception e) {
 				
-				System.out.println("Exception thrown trying to make a transfer between accounts");
+				System.out.println("Exception thrown trying to make a transfer between accounts"); // debug line, prints if an exception is thrown
 				
 			} // end of the catch block
 			
@@ -265,6 +266,8 @@ public class BankAccount implements TheBank{
 	
 	
 	// internal auditor class
+	// arguments: jointAccount1 from the BankingSimulator class, jointAccount2 from the BankingSimulator class, 
+	// 	      and the transaction number from the last internalAudit call
 	public void internalAudit(BankAccount jointAccount1, BankAccount jointAccount2, int last_trans_num) {
 		
 		if(jointAccount1.accountKey.tryLock() && jointAccount2.accountKey.tryLock()) { //  checks to see if both locks are available
@@ -273,7 +276,8 @@ public class BankAccount implements TheBank{
 				
 				jointAccount1.accountKey.lock(); // locks joint account 1
 				jointAccount2.accountKey.lock(); // locks joint account 2
-				
+
+				// prints audit message to the console
 				System.out.println("******************************************************************************************************************************************************************************************************************");
 				System.out.println();
 				System.out.println();
@@ -289,12 +293,14 @@ public class BankAccount implements TheBank{
 				System.out.println();
 				System.out.println("******************************************************************************************************************************************************************************************************************");
 				
-				InternalAuditor.setLastTransNumINT(transactionNum);
+				InternalAuditor.setLastTransNumINT(transactionNum); // sends this transaction number to the internalAudit class
+				// this transaction number is then used as the new last_trans_num for the next internalAusit call
+				
 			} // end of the try block
 			
 			catch(Exception e) {
 				
-				System.out.println("Exception thrown by an internal auditor");
+				System.out.println("Exception thrown by an internal auditor"); // debug line, prints if an exception is thrown
 				
 			} //  end of the catch block
 			
@@ -320,6 +326,8 @@ public class BankAccount implements TheBank{
 	
 	
 	// United States Treasury audit method
+	// arguments: jointAccount1 from the BankingSimulator class, jointAccount2 from the BankingSimulator class, 
+	// 	      and the transaction number from the last treasuryAudit call
 	public void treasuryAudit(BankAccount jointAccount1, BankAccount jointAccount2, int last_trans_num) {
 		
 		if(jointAccount1.accountKey.tryLock() && jointAccount2.accountKey.tryLock()) { //  checks to see if both locks are available
@@ -328,7 +336,8 @@ public class BankAccount implements TheBank{
 				
 				jointAccount1.accountKey.lock(); // locks joint account 1
 				jointAccount2.accountKey.lock(); // locks joint account 2
-				
+
+				// prints treasury audit message
 				System.out.println("******************************************************************************************************************************************************************************************************************");
 				System.out.println();
 				System.out.println();
@@ -344,7 +353,8 @@ public class BankAccount implements TheBank{
 				System.out.println();
 				System.out.println("******************************************************************************************************************************************************************************************************************");
 				
-				USTreasuryAuditor.setLastTransNumUST(transactionNum);
+				USTreasuryAuditor.setLastTransNumUST(transactionNum); // sends this transaction number to the USTreasuryAuditor class
+				// this transaction number is then used as the last_trans_num in the next treasuryAudit call
 				
 			} // end of the try block
 			
