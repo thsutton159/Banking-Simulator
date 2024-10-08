@@ -170,6 +170,9 @@ public class BankAccount implements TheBank{
 	// transfer method
 	// arguments: jointAccount1 from the BankingSimulator class, jointAccount2 from the BankingSimmulator class, amount to transfer, thread making the transfer
 	public void transfer(BankAccount jointAccount1, BankAccount jointAccount2, int amount, String name) {
+
+		// unlike the deposit or withdraw method, a transfer requires that we have the locks on both accounts
+		// no other threads can make changes during this time
 		
 		if(jointAccount1.accountKey.tryLock() && jointAccount2.accountKey.tryLock()) { //  see's if the locks on both accounts are available
 			
@@ -179,10 +182,10 @@ public class BankAccount implements TheBank{
 				jointAccount2.accountKey.lock(); //  locks account 2
 				
 				transactionNum++; //  increments the transaction number
-				
+
 				int coinFlip = (Math.random() <= 0.5) ? 1 : 2; // decides which account to deposit into
 				
-				if(coinFlip == 1) { // if account 1 is selected
+				if(coinFlip == 1) { // if account 1 is selected to be the doner
 					
 					// transfer from account 1 to account 2
 					
@@ -210,7 +213,8 @@ public class BankAccount implements TheBank{
 					} // end of the if statement
 					
 				} else { //  else statement for account selector
-					
+
+					// account 2 is the doner
 					// transfer from account 2 to account 1
 					
 					// checks to see if variable amount is greater than the balance in account 2
