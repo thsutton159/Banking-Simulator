@@ -35,14 +35,14 @@ public class BankingSimulator { // start of class Banking Simulator
 			// use "DT" for depositor threads, "WT" for withdrawal threads, "TT" for transfer threads,
 			// "IA" for internal audit threads, and "UST" for the US treasury thread
 			
-			// depositor threads
+			// depositor threads -> 5 total
 			Depositor DT1 = new Depositor(jointAccount1, jointAccount2, "DT1");
 			Depositor DT2 = new Depositor(jointAccount1, jointAccount2, "DT2");
 			Depositor DT3 = new Depositor(jointAccount1, jointAccount2, "DT3");
 			Depositor DT4 = new Depositor(jointAccount1, jointAccount2, "DT4");
 			Depositor DT5 = new Depositor(jointAccount1, jointAccount2, "DT5");
 			
-			// withdrawal threads 
+			// withdrawal threads -> 10 total
 			Withdrawal WT1 = new Withdrawal(jointAccount1, jointAccount2, "WT1");
 			Withdrawal WT2 = new Withdrawal(jointAccount1, jointAccount2, "WT2");
 			Withdrawal WT3 = new Withdrawal(jointAccount1, jointAccount2, "WT3");
@@ -54,34 +54,33 @@ public class BankingSimulator { // start of class Banking Simulator
 			Withdrawal WT9 = new Withdrawal(jointAccount1, jointAccount2, "WT9");
 			Withdrawal WT10 = new Withdrawal(jointAccount1, jointAccount2, "WT10");
 			
-			// transfer threads
+			// transfer threads -> 2 total
 			Transferrer TT1 = new Transferrer(jointAccount1, jointAccount2, "TT1");
 			Transferrer TT2 = new Transferrer(jointAccount1, jointAccount2, "TT2");
 			
-			// internal auditor threads
+			// internal auditor threads -> 2 total
 			InternalAuditor IA1 = new InternalAuditor(jointAccount1, jointAccount2);
 			InternalAuditor IA2 = new InternalAuditor(jointAccount1, jointAccount2);
 			
-			// US treasury auditor thread
+			// US treasury auditor thread -> 1 total
 			USTreasuryAuditor UST = new USTreasuryAuditor(jointAccount1, jointAccount2);
-			
+
+			// start up message for the terminal
 			System.out.println("***     SIMULATION STARTING, WELCOME     ***"); // prints the heading for the simulation
 			System.out.println(); // prints an empty line for formatting purposes
-			
-			// this is where the threads will be started - threads will be in a random order
 			
 			// the next two lines are for formatting
 			System.out.println("Deposit Agents:\t\t\t	Withdrawal Agents:\t\t		Balances:							Transaction Number:");
 			System.out.println("---------------\t\t\t	--------------------\t\t	------------------------\t\t\t\t\t----------------------------");
 			
-			// starts the depositor agents
+			// starts the depositor agents -> agents run and sleep at random times, times are generated in the Depositor class
 			application.execute(DT1);
 			application.execute(DT2);
 			application.execute(DT3);
 			application.execute(DT4);
 			application.execute(DT5);
 			
-			// starts the withdrawal agents
+			// starts the withdrawal agents -> agents run and sleep at random times, times are generated in the Withdrawal class
 			application.execute(WT1);
 			application.execute(WT2);
 			application.execute(WT3);
@@ -93,15 +92,15 @@ public class BankingSimulator { // start of class Banking Simulator
 			application.execute(WT9);
 			application.execute(WT10);
 			
-			// starts the transferrer agents
+			// starts the transferrer agents -> run and sleep at random times, times are generated in the Transferrer class
 			application.execute(TT1);
 			application.execute(TT2);
 			
-			// starts internal auditor agents
+			// starts internal auditor agents -> run and sleep at random times, times are generated in the InternalAuditor class
 			application.execute(IA1);
 			application.execute(IA2);
 			
-			// starts US Treasury Auditor
+			// starts US Treasury Auditor -> run and sleep at random times, times are generated in the USTreasuryAuditor class
 			application.execute(UST);
 			
 			//listWriter.close(); // closes the list writer
